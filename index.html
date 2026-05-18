@@ -3,9 +3,32 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Calculadora de Importación LATAM — Comprá inteligente desde el exterior</title>
-  <meta name="description" content="Calculá cuánto pagás realmente al importar productos en Latinoamérica. Incluye IVA, aranceles e intermediarios. Piloto: Uruguay." />
-  <meta name="keywords" content="calculadora importación LATAM, calculadora importación Uruguay, cuánto pago de impuestos comprando en Amazon, Tiendamia costo real, comprar en eBay desde Latinoamérica" />
+  <title>Calculadora de Importación LATAM — Cuánto pagás real desde Amazon, Tiendamia, Temu</title>
+  <meta name="description" content="Calculá cuánto pagás realmente al importar productos a Uruguay, Chile, Colombia, Perú y México. Incluye IVA, aranceles, envío e intermediarios. Gratis y sin registro." />
+  <meta name="keywords" content="calculadora importación LATAM, importación Uruguay, impuestos Amazon Uruguay, Tiendamia costo real, calculadora aranceles Chile, importar Colombia, importar Perú, importar México, Temu impuestos, AliExpress aranceles" />
+  <meta name="author" content="Emanuele" />
+  <link rel="canonical" href="https://calculadora-importacion-latam.vercel.app/" />
+
+  <!-- Open Graph (Facebook, WhatsApp, LinkedIn) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://calculadora-importacion-latam.vercel.app/" />
+  <meta property="og:title" content="Calculadora de Importación LATAM — Cuánto pagás real desde el exterior" />
+  <meta property="og:description" content="Calculá cuánto cuesta importar productos a Uruguay, Chile, Colombia, Perú y México. Con IVA, aranceles y envío. Gratis." />
+  <meta property="og:image" content="https://calculadora-importacion-latam.vercel.app/og-image.svg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:locale" content="es_LA" />
+  <meta property="og:site_name" content="Importación LATAM" />
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Calculadora de Importación LATAM" />
+  <meta name="twitter:description" content="Cuánto pagás real al importar productos desde Amazon, Tiendamia, Temu a LATAM." />
+  <meta name="twitter:image" content="https://calculadora-importacion-latam.vercel.app/og-image.svg" />
+
+  <!-- Tema y favicon -->
+  <meta name="theme-color" content="#FF6B1A" />
+  <link rel="icon" type="image/svg+xml" href="og-image.svg" />
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
@@ -52,12 +75,13 @@
         var(--bg-bot) 100%);
       background-attachment: fixed;
       overflow-x: hidden;
-      /* Desktop: lock height to viewport */
-      height: 100dvh;
-      overflow-y: hidden;
+      /* Desktop: calculadora ocupa la primera pantalla, FAQ y footer abajo */
+      min-height: 100dvh;
       display: flex;
       flex-direction: column;
     }
+    /* App-main mantiene su altura de viewport para que el primer fold quede contenido */
+    .app-main { min-height: calc(100dvh - var(--header-h)); }
 
     /* ── Globo decorativo ── */
     .globe-bg {
@@ -771,6 +795,90 @@
     /* ── Anchor para mobile ── */
     #calculadora-anchor { display: block; }
 
+    /* ── FAQ section ── */
+    .faq-section {
+      max-width: 920px;
+      margin: 2.5rem auto 1.5rem;
+      padding: 0 1.5rem;
+      position: relative;
+      z-index: 1;
+    }
+    .faq-title {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 800;
+      letter-spacing: -.02em;
+      color: var(--text-light);
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+    }
+    .faq-title::before {
+      content: '';
+      width: 5px;
+      height: 30px;
+      background: linear-gradient(180deg, var(--neon-orange) 0%, var(--orange) 40%, var(--violet) 100%);
+      border-radius: 4px;
+      box-shadow: 0 0 18px rgba(255,107,26,0.5);
+    }
+    details.faq-item {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: .85rem 1.1rem;
+      margin-bottom: .65rem;
+      backdrop-filter: blur(10px);
+      transition: border-color .2s;
+    }
+    details.faq-item[open] { border-color: rgba(255,153,51,0.30); }
+    details.faq-item summary {
+      cursor: pointer;
+      font-weight: 700;
+      font-size: .95rem;
+      color: var(--text-light);
+      list-style: none;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1rem;
+    }
+    details.faq-item summary::-webkit-details-marker { display: none; }
+    details.faq-item summary::after {
+      content: '+';
+      color: var(--neon-orange);
+      font-size: 1.4rem;
+      font-weight: 400;
+      transition: transform .25s;
+    }
+    details.faq-item[open] summary::after { transform: rotate(45deg); }
+    details.faq-item .faq-content {
+      margin-top: .8rem;
+      font-size: .88rem;
+      line-height: 1.65;
+      color: #C8C8D2;
+    }
+    details.faq-item .faq-content a {
+      color: var(--neon-orange);
+      text-decoration: none;
+      border-bottom: 1px dotted rgba(255,153,51,0.4);
+    }
+
+    /* Footer básico */
+    .site-footer {
+      text-align: center;
+      padding: 1.5rem;
+      font-size: .75rem;
+      color: var(--muted);
+      position: relative;
+      z-index: 1;
+    }
+    .site-footer a {
+      color: var(--neon-orange);
+      text-decoration: none;
+      font-weight: 600;
+    }
+
     /* ── MOBILE ── */
     @media (max-width: 820px) {
       body {
@@ -982,7 +1090,10 @@
         </div>
 
         <div class="form-group">
-          <label id="labelTipoCambio">Tipo de cambio (USD → UYU)</label>
+          <label id="labelTipoCambio">
+            Tipo de cambio (USD → UYU)
+            <span id="tasaEnVivoBadge" style="display:none; margin-left:.4rem; font-size:.6rem; padding:.1rem .45rem; border-radius:6px; background:rgba(132,204,22,0.15); color:#BEF264; letter-spacing:.05em; text-transform:none;"></span>
+          </label>
           <input type="number" id="tipoCambio" min="1" step="0.1" value="43.5" />
         </div>
       </div>
@@ -1041,6 +1152,89 @@
   </section>
 
 </main>
+
+<!-- ── SECCIÓN FAQ ── -->
+<section class="faq-section">
+  <h2 class="faq-title">Preguntas frecuentes</h2>
+
+  <details class="faq-item">
+    <summary>¿Cómo funciona la calculadora?</summary>
+    <div class="faq-content">
+      Elegís tu país, la tienda donde vas a comprar e ingresás el precio del producto y su peso aproximado.
+      La calculadora estima el envío internacional, aplica los impuestos correspondientes (IVA + arancel) según
+      los umbrales oficiales de aduana de cada país y te muestra el total real en USD y en moneda local.
+    </div>
+  </details>
+
+  <details class="faq-item">
+    <summary>¿De dónde salen las tasas de impuestos?</summary>
+    <div class="faq-content">
+      Usamos datos oficiales de las autoridades aduaneras de cada país (Aduana Uruguay, SII Chile, DIAN Colombia,
+      SUNAT Perú, SAT México) vigentes a 2026. Bajo el resultado de cada cálculo aparece el link a la fuente
+      oficial para que puedas verificarlo.
+    </div>
+  </details>
+
+  <details class="faq-item">
+    <summary>¿Es exacto el cálculo?</summary>
+    <div class="faq-content">
+      Es un <strong>estimativo basado en el régimen general</strong>. El monto real puede variar según el código NCM
+      (clasificación arancelaria) del producto, promociones de la tienda, oscilación del dólar y políticas
+      del intermediario que elijas. Para Tiendamia el cálculo es muy preciso porque su estructura de tarifas es pública.
+    </div>
+  </details>
+
+  <details class="faq-item">
+    <summary>¿Por qué Temu y AliExpress no piden peso?</summary>
+    <div class="faq-content">
+      Porque su modelo de negocio incluye el envío internacional dentro del precio del producto. Cuando ves
+      "USD 12,50" en Temu o AliExpress, ese ya es el precio final puesto en destino (salvo impuestos locales
+      si tu país los aplica desde el primer dólar).
+    </div>
+  </details>
+
+  <details class="faq-item">
+    <summary>¿Por qué Tiendamia no suma IVA ni arancel?</summary>
+    <div class="faq-content">
+      Tiendamia opera como intermediario integral: cobra una tarifa (~7% sobre el precio), empaque (~USD 2)
+      y envío por kilo. Esos cargos ya incluyen la gestión aduanal. Si comprás algo de menos de USD 200 USD,
+      Tiendamia se encarga de todo y no pagás impuestos extra. Por encima de ese umbral pueden aplicar cargos
+      adicionales que Tiendamia te muestra al pagar.
+    </div>
+  </details>
+
+  <details class="faq-item">
+    <summary>¿Por qué no aparecen Argentina ni Brasil?</summary>
+    <div class="faq-content">
+      Su regulación cambia con frecuencia y queremos publicar datos solo cuando podemos garantizarlos.
+      Argentina tiene un régimen courier con cupos anuales (USD 3000 / año) y Brasil aplica Remessa Conforme
+      con ICMS variable por estado. Los estamos validando antes de activarlos.
+    </div>
+  </details>
+
+  <details class="faq-item">
+    <summary>¿Es gratis usar la calculadora?</summary>
+    <div class="faq-content">
+      Sí, completamente gratis y sin registro. Si comprás a través de los links de las tiendas en este sitio
+      recibimos una pequeña comisión de afiliado — esto no encarece tu compra, simplemente ayuda a mantener
+      la herramienta gratuita.
+    </div>
+  </details>
+
+  <details class="faq-item">
+    <summary>¿De dónde sale el tipo de cambio?</summary>
+    <div class="faq-content">
+      Tomamos cotizaciones diarias de open.er-api.com (USD frente a UYU, CLP, COP, PEN, MXN). Si la API no
+      responde, usamos un valor de referencia preconfigurado. El campo es editable: si conocés un mejor tipo
+      de cambio (paralelo, compra/venta), podés ingresarlo manualmente.
+    </div>
+  </details>
+</section>
+
+<footer class="site-footer">
+  Hecho con ❤️ por <a href="https://github.com/emmpi24" target="_blank" rel="noopener">Emanuele</a> ·
+  Código abierto en <a href="https://github.com/emmpi24/calculadora-importacion-latam" target="_blank" rel="noopener">GitHub</a>
+</footer>
 
 <script>
   const AMAZON_TAG = "TU_TAG_AMAZON";
@@ -1178,7 +1372,41 @@
   };
 
   let paisActivo = "UY";
-  const TASAS = { CLP: 960, COP: 4150, PEN: 3.7, MXN: 17.5 };
+  // Tasas de respaldo (se sobrescriben con valores en vivo al cargar)
+  const TASAS = { UYU: 43.5, CLP: 960, COP: 4150, PEN: 3.7, MXN: 17.5 };
+  let tasasEnVivo = false;
+
+  // Trae tipos de cambio en vivo desde open.er-api.com (gratuita, sin API key)
+  async function cargarTasasEnVivo() {
+    try {
+      const resp = await fetch("https://open.er-api.com/v6/latest/USD", { cache: "no-cache" });
+      if (!resp.ok) return;
+      const data = await resp.json();
+      if (!data || !data.rates) return;
+      const rates = data.rates;
+      const monedas = ["UYU", "CLP", "COP", "PEN", "MXN"];
+      monedas.forEach(m => {
+        if (typeof rates[m] === "number" && rates[m] > 0) TASAS[m] = rates[m];
+      });
+      // Actualizar tasaUSDDefault en cada país con la tasa en vivo
+      Object.keys(PAISES).forEach(k => {
+        const cfg = PAISES[k];
+        if (cfg && cfg.moneda && TASAS[cfg.moneda]) cfg.tasaUSDDefault = TASAS[cfg.moneda];
+      });
+      // Refrescar el input visible del tipo de cambio del país activo
+      const cfgActivo = PAISES[paisActivo];
+      const inputTC = document.getElementById("tipoCambio");
+      if (inputTC && cfgActivo) inputTC.value = cfgActivo.tasaUSDDefault.toFixed(2);
+      tasasEnVivo = true;
+      const badge = document.getElementById("tasaEnVivoBadge");
+      if (badge) {
+        badge.textContent = "🟢 en vivo · " + new Date(data.time_last_update_unix * 1000).toLocaleDateString();
+        badge.style.display = "";
+      }
+    } catch (e) {
+      // Falla silenciosa: se usan las tasas hardcoded de respaldo
+    }
+  }
 
   // Disclaimers y requisitos mínimos por tienda/país (solo mensajes, sin links)
   const TIENDA_DISCLAIMERS = {
@@ -1514,6 +1742,27 @@
       return;
     }
 
+    // Precio absurdamente alto (probable error de tipeo)
+    if (precioRaw > 100000) {
+      const inp = document.getElementById("precio");
+      inp.classList.add("input-error");
+      inp.focus();
+      setTimeout(() => inp.classList.remove("input-error"), 1500);
+      alert("El precio parece demasiado alto. Verificá que lo ingresaste correctamente.");
+      return;
+    }
+
+    // Peso absurdo (más de 30 kg suele ser un error de tipeo, ej. 55 en vez de 0.55)
+    const pesoCheck = parseFloat(document.getElementById("peso").value) || 0;
+    if (pesoCheck > 30) {
+      const inp = document.getElementById("peso");
+      inp.classList.add("input-error");
+      inp.focus();
+      setTimeout(() => inp.classList.remove("input-error"), 1500);
+      alert("El peso parece muy alto (más de 30 kg). ¿Quisiste poner " + (pesoCheck / 100).toFixed(2) + " kg en lugar de " + pesoCheck + "?");
+      return;
+    }
+
     const moneda     = document.getElementById("monedaPrecio").value;
     const envioInput = document.getElementById("envio").value;
     const envioManual = envioInput !== "" ? parseFloat(envioInput) : null;
@@ -1718,7 +1967,12 @@
   renderIntermediarios();
   actualizarLabelsPorPais();
   onTiendaChange();        // inicializa visibilidad de "Tipo de compra" y disclaimer
+  cargarTasasEnVivo();     // trae cotizaciones reales en background
 </script>
+
+<!-- Vercel Analytics: mide visitas, países, dispositivos. Dashboard en vercel.com -->
+<script defer src="/_vercel/insights/script.js"></script>
+<script defer src="/_vercel/speed-insights/script.js"></script>
 
 </body>
 </html>

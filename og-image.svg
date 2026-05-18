@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#E8E8EC"/>
+      <stop offset="35%" stop-color="#B8B8C2"/>
+      <stop offset="75%" stop-color="#3A3A48"/>
+      <stop offset="100%" stop-color="#1A1A22"/>
+    </linearGradient>
+    <linearGradient id="title" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#FF6B1A"/>
+      <stop offset="35%" stop-color="#FF9933"/>
+      <stop offset="70%" stop-color="#8B5CF6"/>
+      <stop offset="100%" stop-color="#C084FC"/>
+    </linearGradient>
+    <radialGradient id="globe" cx="40%" cy="35%" r="70%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.18"/>
+      <stop offset="60%" stop-color="#FFFFFF" stop-opacity="0.06"/>
+      <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.00"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="1200" height="630" fill="url(#bg)"/>
+
+  <!-- Globo decorativo derecha -->
+  <g transform="translate(950, 420)" opacity="0.55">
+    <circle cx="0" cy="0" r="280" fill="url(#globe)"/>
+    <circle cx="0" cy="0" r="280" fill="none" stroke="#FFFFFF" stroke-opacity="0.14" stroke-width="1"/>
+    <g fill="none" stroke="#FFFFFF" stroke-opacity="0.09" stroke-width="0.8">
+      <ellipse cx="0" cy="0" rx="280" ry="42"/>
+      <ellipse cx="0" cy="0" rx="280" ry="110"/>
+      <ellipse cx="0" cy="0" rx="280" ry="190"/>
+      <ellipse cx="0" cy="0" rx="42" ry="280"/>
+      <ellipse cx="0" cy="0" rx="110" ry="280"/>
+      <ellipse cx="0" cy="0" rx="190" ry="280"/>
+    </g>
+  </g>
+
+  <!-- Tag superior -->
+  <g transform="translate(80, 90)">
+    <rect width="380" height="44" rx="22" fill="rgba(139,92,246,0.15)" stroke="rgba(139,92,246,0.45)" stroke-width="1.5"/>
+    <circle cx="22" cy="22" r="5" fill="#FF6B1A"/>
+    <text x="42" y="29" font-family="Arial, sans-serif" font-size="14" font-weight="700" fill="#8B5CF6" letter-spacing="3">LATAM IMPORT TOOL · 2026</text>
+  </g>
+
+  <!-- Título principal -->
+  <text x="80" y="280" font-family="Georgia, 'Bricolage Grotesque', serif" font-size="56" font-weight="600" fill="#FFFFFF" opacity="0.75">Calculadora de</text>
+  <text x="80" y="390" font-family="Georgia, 'Bricolage Grotesque', serif" font-size="140" font-weight="900" fill="url(#title)" letter-spacing="-3">Importación</text>
+
+  <!-- Bajada -->
+  <text x="80" y="455" font-family="Arial, sans-serif" font-size="26" font-weight="500" fill="#FFFFFF" opacity="0.7">Cuánto pagás real al traer productos desde el exterior.</text>
+  <text x="80" y="490" font-family="Arial, sans-serif" font-size="26" font-weight="500" fill="#FFFFFF" opacity="0.7">Con impuestos, aranceles y envío incluidos.</text>
+
+  <!-- Países activos -->
+  <g transform="translate(80, 540)">
+    <text x="0" y="0" font-family="Arial, sans-serif" font-size="22" font-weight="700" fill="#FF9933">🇺🇾 Uruguay  ·  🇨🇱 Chile  ·  🇨🇴 Colombia  ·  🇵🇪 Perú  ·  🇲🇽 México</text>
+  </g>
+
+  <!-- Marca abajo derecha -->
+  <text x="1120" y="600" font-family="Arial, sans-serif" font-size="16" font-weight="600" fill="#FFFFFF" opacity="0.5" text-anchor="end">calculadora-importacion-latam.vercel.app</text>
+</svg>
