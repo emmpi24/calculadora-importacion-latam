@@ -1,0 +1,1729 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculadora de Importación LATAM — Comprá inteligente desde el exterior</title>
+  <meta name="description" content="Calculá cuánto pagás realmente al importar productos en Latinoamérica. Incluye IVA, aranceles e intermediarios. Piloto: Uruguay." />
+  <meta name="keywords" content="calculadora importación LATAM, calculadora importación Uruguay, cuánto pago de impuestos comprando en Amazon, Tiendamia costo real, comprar en eBay desde Latinoamérica" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;700&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg-top:      #E8E8EC;
+      --bg-mid:      #B8B8C2;
+      --bg-low:      #3A3A48;
+      --bg-bot:      #1A1A22;
+
+      --orange:      #FF6B1A;
+      --violet:      #8B5CF6;
+      --neon-orange: #FF9933;
+      --neon-violet: #C084FC;
+
+      --text-dark:   #2A2A35;
+      --text-light:  #F0F0F5;
+      --muted:       #8A8A95;
+
+      --card:        rgba(255,255,255,0.06);
+      --card-light:  rgba(255,255,255,0.55);
+      --border:      rgba(255,255,255,0.10);
+      --border-dark: rgba(0,0,0,0.08);
+
+      --radius:      16px;
+      --header-h:    54px;
+    }
+
+    /* ── Base ── */
+    html {
+      height: 100%;
+    }
+
+    body {
+      font-family: 'Manrope', system-ui, sans-serif;
+      color: var(--text-light);
+      background: linear-gradient(160deg,
+        var(--bg-top) 0%,
+        var(--bg-mid) 28%,
+        var(--bg-low) 62%,
+        var(--bg-bot) 100%);
+      background-attachment: fixed;
+      overflow-x: hidden;
+      /* Desktop: lock height to viewport */
+      height: 100dvh;
+      overflow-y: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* ── Globo decorativo ── */
+    .globe-bg {
+      position: fixed;
+      right: -6vw;
+      bottom: -6vw;
+      width: clamp(260px, 38vw, 560px);
+      height: clamp(260px, 38vw, 560px);
+      pointer-events: none;
+      z-index: 0;
+      opacity: .6;
+    }
+    .globe-bg svg { width: 100%; height: 100%; display: block; }
+
+    /* ── TOP BAR ── */
+    .top-bar {
+      height: var(--header-h);
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 1.75rem;
+      position: relative;
+      z-index: 2;
+      border-bottom: 1px solid rgba(0,0,0,0.06);
+      background: rgba(232,232,236,0.45);
+      backdrop-filter: blur(12px);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: .7rem;
+    }
+
+    .brand-dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 50%;
+      background: var(--orange);
+      box-shadow: 0 0 10px var(--neon-orange);
+      flex-shrink: 0;
+    }
+
+    .brand-name {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: -.025em;
+      background: linear-gradient(100deg, var(--orange) 0%, var(--violet) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .brand-tag {
+      font-size: .62rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .18em;
+      padding: .25rem .65rem;
+      border: 1px solid rgba(139,92,246,0.30);
+      border-radius: 100px;
+      background: rgba(139,92,246,0.08);
+      color: var(--violet);
+    }
+
+    .country-badge {
+      display: flex;
+      align-items: center;
+      gap: .45rem;
+      font-size: .75rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      opacity: .7;
+    }
+
+    /* ── MAIN LAYOUT ── */
+    .app-main {
+      flex: 1;
+      min-height: 0;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+      padding: 1rem 1.75rem 1rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    /* ── RIGHT COLUMN — Calculadora ── */
+    .col-calc {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding-top: 3.5rem;
+      min-height: 0;
+      overflow-y: auto;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(255,255,255,0.12) transparent;
+    }
+    .col-calc::-webkit-scrollbar { width: 4px; }
+    .col-calc::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.14); border-radius: 4px; }
+
+    /* ── RIGHT COLUMN — Búsqueda + Tiendas ── */
+    .col-right {
+      display: flex;
+      flex-direction: column;
+      min-height: 0;
+      /* overflow visible para que el hover de los extremos no quede clippeado */
+      overflow: visible;
+    }
+
+    /* ── Intro text en columna izquierda ── */
+    .search-intro {
+      margin-bottom: .65rem;
+      flex-shrink: 0;
+    }
+
+    .search-intro .intro-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: .45rem;
+      background: rgba(139,92,246,0.10);
+      border: 1px solid rgba(139,92,246,0.30);
+      color: var(--violet);
+      font-size: .6rem;
+      font-weight: 700;
+      letter-spacing: .18em;
+      text-transform: uppercase;
+      padding: .28rem .8rem;
+      border-radius: 100px;
+      margin-bottom: .5rem;
+    }
+
+    .intro-dot {
+      width: 6px;
+      height: 6px;
+      background: var(--orange);
+      border-radius: 50%;
+      box-shadow: 0 0 8px var(--neon-orange);
+      flex-shrink: 0;
+    }
+
+    .search-intro .title-sub {
+      display: block;
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: clamp(1rem, 1.6vw, 1.25rem);
+      font-weight: 600;
+      color: var(--text-dark);
+      opacity: .75;
+      letter-spacing: -.01em;
+      margin-bottom: .15rem;
+    }
+
+    .search-intro h2 {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: clamp(2.6rem, 5.5vw, 5.2rem);
+      font-weight: 800;
+      letter-spacing: -.03em;
+      line-height: .92;
+      margin-bottom: .5rem;
+      background: linear-gradient(100deg,
+        var(--orange) 0%,
+        var(--neon-orange) 35%,
+        var(--violet) 70%,
+        var(--neon-violet) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      filter: drop-shadow(0 4px 18px rgba(255,107,26,0.22))
+              drop-shadow(0 4px 18px rgba(139,92,246,0.18));
+    }
+
+    .search-intro p {
+      font-size: .78rem;
+      color: var(--text-dark);
+      opacity: .55;
+      font-weight: 500;
+      line-height: 1.55;
+      max-width: 340px;
+    }
+
+    /* ── Barra de búsqueda ── */
+    .search-bar {
+      background: var(--card-light);
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: var(--radius);
+      padding: .65rem .75rem;
+      display: flex;
+      gap: .55rem;
+      backdrop-filter: blur(14px);
+      box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+      margin-bottom: 1rem;
+    }
+
+    .search-bar input {
+      flex: 1;
+      padding: .75rem 1rem;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: 10px;
+      font-size: .92rem;
+      color: var(--text-dark);
+      font-family: 'Manrope', sans-serif;
+      font-weight: 500;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s;
+    }
+
+    .search-bar input::placeholder { color: var(--muted); font-weight: 400; }
+
+    .search-bar input:focus {
+      border-color: var(--orange);
+      box-shadow: 0 0 0 3px rgba(255,107,26,0.14);
+    }
+
+    .search-bar button {
+      padding: .75rem 1.4rem;
+      background: linear-gradient(135deg, var(--orange) 0%, var(--violet) 100%);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: .88rem;
+      font-weight: 700;
+      font-family: 'Manrope', sans-serif;
+      cursor: pointer;
+      white-space: nowrap;
+      letter-spacing: .01em;
+      transition: transform .2s, box-shadow .2s;
+      box-shadow: 0 4px 16px rgba(255,107,26,0.30);
+    }
+
+    .search-bar button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 26px rgba(139,92,246,0.40), 0 4px 16px rgba(255,107,26,0.30);
+    }
+
+    /* ── Carrusel de tiendas ── */
+    .stores-label {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      letter-spacing: -.01em;
+      color: var(--text-dark);
+      opacity: .85;
+      margin-bottom: .6rem;
+      display: flex;
+      align-items: center;
+      gap: .6rem;
+    }
+    .stores-label::before {
+      content: '';
+      width: 4px;
+      height: 20px;
+      background: linear-gradient(180deg, var(--orange), var(--violet));
+      border-radius: 3px;
+      box-shadow: 0 0 12px rgba(255,107,26,0.45);
+      flex-shrink: 0;
+    }
+
+    .stores-carousel {
+      display: flex;
+      flex-wrap: nowrap;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: clamp(.1rem, 0.5vw, .4rem);
+      /* padding lateral: da espacio para que Amazon y Temu no queden cortados al agrandarse */
+      padding: .5rem 18px .9rem;
+      margin: 0 -18px;
+      overflow: visible;
+      position: relative;
+    }
+
+    .store-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: .45rem;
+      text-decoration: none;
+      cursor: pointer;
+      position: relative;
+      flex: 1;
+      z-index: 1;
+      transition:
+        z-index 0s,
+        opacity .3s ease;
+    }
+
+    .store-card .circle {
+      width: clamp(82px, 8.5vw, 106px);
+      height: clamp(82px, 8.5vw, 106px);
+      border-radius: 50%;
+      background: #fff;
+      border: 3px solid rgba(255,255,255,0.75);
+      box-shadow:
+        0 6px 22px rgba(0,0,0,0.14),
+        0 2px 6px rgba(0,0,0,0.08);
+      overflow: hidden;
+      transition:
+        transform .42s cubic-bezier(.18,.89,.32,1.18),
+        box-shadow .4s ease,
+        opacity .3s ease;
+      will-change: transform;
+    }
+
+    .store-card .circle img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .store-card .store-name {
+      font-size: .72rem;
+      font-weight: 700;
+      color: var(--text-dark);
+      opacity: 0;
+      transition: opacity .25s ease, color .25s ease;
+      text-align: center;
+      pointer-events: none;
+    }
+
+    /* Hover: la tienda se destaca */
+    .store-card:hover {
+      z-index: 20;
+    }
+
+    .store-card:hover .circle {
+      transform: scale(1.32) translateY(-10px);
+      box-shadow:
+        0 22px 52px rgba(255,107,26,0.34),
+        0 10px 24px rgba(139,92,246,0.24),
+        0 0 0 3px rgba(255,153,51,0.55);
+    }
+
+    .store-card:hover .store-name {
+      opacity: 1;
+      color: var(--orange);
+    }
+
+    /* El resto se atenúa cuando hay hover en alguna */
+    .stores-carousel:has(.store-card:hover) .store-card:not(:hover) .circle {
+      transform: scale(0.88);
+      opacity: 0.55;
+    }
+
+    .stores-carousel:has(.store-card:hover) .store-card:not(:hover) {
+      opacity: 0.7;
+    }
+
+    /* Estado deshabilitado */
+    .store-card.disabled { cursor: default; pointer-events: none; }
+    .store-card.disabled .circle { opacity: .45; filter: saturate(.3); }
+
+    /* Shake en búsqueda vacía */
+    .search-bar.shake { animation: shake .4s ease; }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25%       { transform: translateX(-7px); }
+      75%       { transform: translateX(7px); }
+    }
+
+    /* ── Input con error ── */
+    .form-group input.input-error {
+      border-color: #f87171 !important;
+      box-shadow: 0 0 0 3px rgba(248,113,113,0.18) !important;
+      animation: inputShake .38s ease;
+    }
+    @keyframes inputShake {
+      0%, 100% { transform: translateX(0); }
+      25%       { transform: translateX(-5px); }
+      75%       { transform: translateX(5px); }
+    }
+
+    /* ── Fila exenta (IVA / Arancel = $0) ── */
+    .desglose-fila.exento { background: rgba(132,204,22,0.06); }
+    .desglose-fila.exento span:last-child { color: #BEF264 !important; }
+
+    /* ── Hint antes de calcular ── */
+    .calc-hint {
+      margin-top: .85rem;
+      font-size: .75rem;
+      color: var(--muted);
+      text-align: center;
+      line-height: 1.5;
+      padding: .45rem;
+      opacity: .75;
+    }
+    .calc-hint strong { color: var(--neon-orange); font-weight: 700; }
+
+    /* ── Disclaimer de tienda (Temu/AliExpress) ── */
+    .tienda-disclaimer {
+      background: rgba(255,107,26,0.10);
+      border: 1px solid rgba(255,107,26,0.30);
+      border-radius: 9px;
+      padding: .55rem .75rem;
+      font-size: .72rem;
+      line-height: 1.5;
+      color: var(--neon-orange);
+    }
+    .tienda-disclaimer strong { color: var(--neon-orange); font-weight: 700; }
+
+    /* ── Fuente oficial bajo el resultado ── */
+    .fuente-oficial {
+      margin-top: .9rem;
+      padding: .65rem .85rem;
+      background: rgba(255,255,255,0.04);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: .7rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+    .fuente-oficial strong { color: var(--text-light); font-weight: 700; }
+    .fuente-oficial a {
+      color: var(--neon-orange);
+      text-decoration: none;
+      font-weight: 600;
+      border-bottom: 1px dotted rgba(255,153,51,0.4);
+    }
+    .fuente-oficial a:hover {
+      color: var(--neon-violet);
+      border-bottom-color: var(--neon-violet);
+    }
+
+    /* ── Info footer de tiendas ── */
+    .stores-footer {
+      margin-top: .9rem;
+      padding: .65rem 1rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: .73rem;
+      color: var(--muted);
+      line-height: 1.55;
+    }
+
+    .stores-footer strong {
+      color: var(--neon-orange);
+      font-weight: 700;
+    }
+
+    /* ── Panel calculadora ── */
+    .panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.25rem 1.35rem;
+      backdrop-filter: blur(12px);
+      transition: box-shadow .4s ease;
+    }
+
+    /* Animación al calcular — el panel se inclina hacia los resultados */
+    @keyframes calcHacia {
+      0%   { transform: translateY(0)   scale(1);     box-shadow: none; }
+      30%  { transform: translateY(10px) scale(1.012); box-shadow: 0 32px 64px rgba(255,107,26,0.20), 0 0 0 1.5px rgba(255,153,51,0.30); }
+      62%  { transform: translateY(5px)  scale(1.004); }
+      100% { transform: translateY(0)   scale(1);     box-shadow: none; }
+    }
+
+    .panel.calculando {
+      animation: calcHacia .7s cubic-bezier(.22,.85,.28,1.08) forwards;
+    }
+
+    .panel-title {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: 1.55rem;
+      font-weight: 800;
+      letter-spacing: -.02em;
+      margin-bottom: 1.2rem;
+      display: flex;
+      align-items: center;
+      gap: .75rem;
+      color: #FFFFFF;
+      text-shadow: 0 2px 14px rgba(255,107,26,0.18);
+      line-height: 1.1;
+    }
+
+    .panel-title::before {
+      content: '';
+      width: 5px;
+      height: 28px;
+      background: linear-gradient(180deg, var(--neon-orange) 0%, var(--orange) 40%, var(--violet) 100%);
+      border-radius: 4px;
+      box-shadow: 0 0 18px rgba(255,107,26,0.65), 0 0 30px rgba(139,92,246,0.35);
+      flex-shrink: 0;
+    }
+
+    /* ── Formulario ── */
+    .form-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .8rem;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: .35rem;
+      min-width: 0;
+    }
+
+    .form-group label {
+      font-size: .72rem;
+      font-weight: 700;
+      color: #C8C8D2;
+      text-transform: uppercase;
+      letter-spacing: .1em;
+    }
+
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      min-width: 0;
+      padding: .7rem .9rem;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid var(--border);
+      border-radius: 9px;
+      font-size: .92rem;
+      color: var(--text-light);
+      font-family: 'JetBrains Mono', monospace;
+      outline: none;
+      transition: border-color .2s, box-shadow .2s, background .2s;
+    }
+
+    .form-group select {
+      font-family: 'Manrope', sans-serif;
+      font-size: .85rem;
+      font-weight: 500;
+      cursor: pointer;
+    }
+
+    .form-group select option { background: var(--bg-bot); color: var(--text-light); }
+
+    .form-group input:focus,
+    .form-group select:focus {
+      border-color: var(--neon-orange);
+      box-shadow: 0 0 0 3px rgba(255,153,51,0.14);
+      background: rgba(255,255,255,0.08);
+    }
+
+    .price-input-group { display: flex; min-width: 0; }
+
+    .price-input-group input {
+      flex: 1 1 0;
+      min-width: 0;
+      border-radius: 9px 0 0 9px !important;
+      border-right: none !important;
+    }
+
+    .price-input-group select {
+      flex: 0 0 80px;
+      width: 80px;
+      border-radius: 0 9px 9px 0 !important;
+      background: rgba(255,107,26,0.10) !important;
+      font-family: 'JetBrains Mono', monospace !important;
+      font-size: .78rem !important;
+      text-align: center;
+      color: var(--neon-orange) !important;
+      border: 1px solid var(--border) !important;
+    }
+
+    /* ── Botón calcular ── */
+    .calc-btn {
+      margin-top: 1rem;
+      width: 100%;
+      padding: .88rem;
+      background: linear-gradient(135deg, var(--orange) 0%, var(--violet) 100%);
+      color: #fff;
+      border: none;
+      border-radius: 11px;
+      font-size: .95rem;
+      font-weight: 700;
+      font-family: 'Manrope', sans-serif;
+      cursor: pointer;
+      letter-spacing: .015em;
+      transition: transform .18s, box-shadow .18s;
+      box-shadow: 0 6px 22px rgba(255,107,26,0.30);
+    }
+
+    .calc-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 32px rgba(255,107,26,0.42), 0 6px 22px rgba(139,92,246,0.28);
+    }
+
+    .calc-btn:disabled {
+      filter: grayscale(.7);
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* ── Resultado ── */
+    #resultado {
+      display: none;
+      margin-top: 1rem;
+    }
+
+    #resultado.visible {
+      display: block;
+      animation: resultSlideIn .5s cubic-bezier(.2,.85,.25,1.05) forwards;
+    }
+
+    @keyframes resultSlideIn {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .alerta {
+      padding: .7rem 1rem;
+      border-radius: 9px;
+      font-size: .82rem;
+      font-weight: 600;
+      margin-bottom: .9rem;
+      text-align: center;
+    }
+
+    .alerta.libre    { background: rgba(132,204,22,0.10);  border: 1px solid rgba(132,204,22,0.35); color: #BEF264; }
+    .alerta.impuesto { background: rgba(255,107,26,0.10);  border: 1px solid rgba(255,107,26,0.40); color: var(--neon-orange); }
+
+    .desglose {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border);
+      border-radius: 11px;
+      overflow: hidden;
+      background: rgba(255,255,255,0.02);
+    }
+
+    .desglose-fila {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: .55rem .9rem;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: .84rem;
+    }
+
+    .desglose-fila:last-child { border-bottom: none; }
+    .desglose-fila span:first-child { color: var(--muted); font-weight: 500; }
+
+    .desglose-fila span:last-child {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .82rem;
+      color: var(--text-light);
+      font-weight: 500;
+    }
+
+    .desglose-fila.total {
+      background: rgba(255,107,26,0.07);
+      border-top: 1px solid rgba(255,107,26,0.22) !important;
+      padding: .72rem .9rem;
+    }
+
+    .desglose-fila.total span:first-child {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: .72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      color: var(--neon-orange);
+    }
+
+    .desglose-fila.total span:last-child {
+      color: var(--neon-orange);
+      font-weight: 700;
+      font-size: .95rem;
+    }
+
+    /* ── Total moneda local ── */
+    .total-local {
+      margin-top: .85rem;
+      background: linear-gradient(135deg, #18121F 0%, #2A1A38 100%);
+      border: 1px solid rgba(192,132,252,0.42);
+      border-radius: 13px;
+      padding: 1.1rem 1.25rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 0 36px rgba(192,132,252,0.14), inset 0 0 24px rgba(139,92,246,0.04);
+      position: relative;
+      overflow: hidden;
+      gap: 1rem;
+    }
+
+    .total-local::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 1px;
+      background: linear-gradient(90deg, transparent 0%, var(--neon-violet) 50%, transparent 100%);
+    }
+
+    .total-local span:first-child {
+      font-family: 'Bricolage Grotesque', sans-serif;
+      font-size: .75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .14em;
+      color: var(--muted);
+    }
+
+    .total-local span:last-child {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.6rem;
+      font-weight: 700;
+      color: var(--neon-violet);
+      text-shadow: 0 0 22px rgba(192,132,252,0.55);
+    }
+
+    /* ── Anchor para mobile ── */
+    #calculadora-anchor { display: block; }
+
+    /* ── MOBILE ── */
+    @media (max-width: 820px) {
+      body {
+        height: auto;
+        overflow-y: auto;
+      }
+
+      .app-main {
+        grid-template-columns: 1fr;
+        padding: .9rem 1rem 2rem;
+        gap: 1rem;
+        overflow: visible;
+        flex: none;
+      }
+
+      .col-calc {
+        overflow-y: visible;
+        order: 1;
+      }
+
+      .col-right {
+        overflow-y: visible;
+        order: 2;
+      }
+
+      .stores-carousel {
+        gap: .4rem;
+        justify-content: space-between;
+        padding: .4rem 0 .75rem;
+      }
+
+      .store-card .circle {
+        width: 68px;
+        height: 68px;
+      }
+
+      .top-bar {
+        padding: 0 1rem;
+      }
+
+      .brand-tag { display: none; }
+
+      .total-local span:last-child { font-size: 1.35rem; }
+
+      .col-calc { justify-content: flex-start; }
+    }
+
+    @media (max-width: 480px) {
+      .form-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── Globo decorativo ── -->
+<div class="globe-bg" aria-hidden="true">
+  <svg viewBox="0 0 600 600" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <radialGradient id="sphereGrad" cx="40%" cy="35%" r="70%">
+        <stop offset="0%"   stop-color="#FFFFFF" stop-opacity="0.18"/>
+        <stop offset="60%"  stop-color="#FFFFFF" stop-opacity="0.06"/>
+        <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.00"/>
+      </radialGradient>
+    </defs>
+    <circle cx="300" cy="300" r="270" fill="url(#sphereGrad)"/>
+    <circle cx="300" cy="300" r="270" fill="none" stroke="#FFFFFF" stroke-opacity="0.14" stroke-width="1"/>
+    <g fill="none" stroke="#FFFFFF" stroke-opacity="0.09" stroke-width="0.7">
+      <ellipse cx="300" cy="300" rx="270" ry="40"/>
+      <ellipse cx="300" cy="300" rx="270" ry="105"/>
+      <ellipse cx="300" cy="300" rx="270" ry="180"/>
+      <ellipse cx="300" cy="300" rx="270" ry="240"/>
+    </g>
+    <g fill="none" stroke="#FFFFFF" stroke-opacity="0.09" stroke-width="0.7">
+      <ellipse cx="300" cy="300" rx="40"  ry="270"/>
+      <ellipse cx="300" cy="300" rx="105" ry="270"/>
+      <ellipse cx="300" cy="300" rx="180" ry="270"/>
+      <ellipse cx="300" cy="300" rx="240" ry="270"/>
+      <line x1="300" y1="30" x2="300" y2="570"/>
+    </g>
+    <g fill="#FFFFFF" fill-opacity="0.08">
+      <path d="M 295 320 Q 280 305 280 290 Q 285 275 305 275 Q 322 275 330 295 Q 335 320 320 360 Q 308 405 295 420 Q 285 425 280 415 Q 275 385 285 350 Z"/>
+      <path d="M 200 215 Q 190 195 210 180 Q 240 170 265 178 Q 285 188 285 210 Q 280 235 260 245 Q 235 252 215 245 Q 198 235 200 215 Z"/>
+      <path d="M 268 258 Q 275 252 282 258 Q 287 268 281 275 Q 273 280 267 273 Q 264 265 268 258 Z"/>
+      <path d="M 355 270 Q 345 255 358 245 Q 380 240 395 255 Q 405 280 400 310 Q 388 345 372 355 Q 360 358 355 345 Q 348 320 350 295 Z"/>
+      <path d="M 355 230 Q 348 220 360 215 Q 380 215 388 225 Q 392 238 380 245 Q 365 248 358 240 Z"/>
+      <path d="M 395 220 Q 410 205 440 215 Q 470 230 478 255 Q 475 280 455 285 Q 425 285 405 270 Q 392 248 395 220 Z"/>
+      <path d="M 445 360 Q 460 355 475 365 Q 478 378 465 383 Q 450 382 442 372 Z"/>
+    </g>
+  </svg>
+</div>
+
+<!-- ── TOP BAR ── -->
+<header class="top-bar">
+  <div class="brand">
+    <span class="brand-dot"></span>
+    <span class="brand-name">Importación LATAM</span>
+    <span class="brand-tag">Piloto Uruguay</span>
+  </div>
+  <div class="country-badge">
+    <span>Uruguay</span>
+  </div>
+</header>
+
+<!-- ── MAIN: 2 columnas ── -->
+<main class="app-main">
+
+  <!-- ══ COLUMNA IZQUIERDA — Búsqueda + Tiendas ══ -->
+  <section class="col-right">
+
+    <div class="search-intro">
+      <div class="intro-tag">
+        <span class="intro-dot"></span>
+        LATAM Import Tool · Piloto Uruguay
+      </div>
+      <span class="title-sub">Calculadora de</span>
+      <h2>Importación</h2>
+      <p>Buscá en las mejores tiendas internacionales y calculá cuánto pagás realmente con impuestos y aranceles incluidos.</p>
+    </div>
+
+    <div class="search-bar" id="searchBar">
+      <input
+        type="text"
+        id="busqueda"
+        placeholder='Ej: "auriculares bluetooth", "zapatillas Nike"…'
+        onkeydown="if(event.key==='Enter') buscar()"
+      />
+      <button onclick="buscar()">Buscar</button>
+    </div>
+
+    <div class="stores-label">Buscar en tiendas</div>
+    <div class="stores-carousel" id="storesRow"></div>
+
+    <div class="stores-footer">
+      <strong>🌎 5 países LATAM activos:</strong> 🇺🇾 Uruguay · 🇨🇱 Chile · 🇨🇴 Colombia · 🇵🇪 Perú · 🇲🇽 México<br>
+      Próximamente: 🇦🇷 Argentina · 🇧🇷 Brasil · Los cálculos son estimativos · Las tasas varían según la aduana de cada país.
+    </div>
+
+  </section>
+
+  <!-- ══ COLUMNA DERECHA — Calculadora ══ -->
+  <section class="col-calc" id="calculadora-anchor">
+    <div class="panel">
+      <div class="panel-title">Calculadora de costos reales</div>
+
+      <div class="form-grid">
+        <div class="form-group" style="grid-column: 1 / -1;">
+          <label>País de destino</label>
+          <select id="paisSelect" onchange="cambiarPais(this.value)">
+            <option value="UY">Uruguay</option>
+            <option value="CL">Chile</option>
+            <option value="CO">Colombia</option>
+            <option value="PE">Perú</option>
+            <option value="MX">México</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Tienda</label>
+          <select id="tiendaSelect" onchange="onTiendaChange()">
+            <option value="amazon">Amazon</option>
+            <option value="ebay">eBay</option>
+            <option value="tiendamia">Tiendamia</option>
+            <option value="mercadolibre">Mercado Libre</option>
+            <option value="aliexpress">AliExpress</option>
+            <option value="temu">Temu</option>
+          </select>
+        </div>
+
+        <div class="form-group" id="grupoTipoCompra" style="display:none;">
+          <label>Tipo de compra</label>
+          <select id="tipoCompra" onchange="onTipoCompraChange()">
+            <option value="internacional">Internacional (paga impuestos)</option>
+            <option value="local">Local (mismo país, sin impuestos)</option>
+          </select>
+        </div>
+
+        <div id="tiendaDisclaimer" class="tienda-disclaimer" style="grid-column: 1 / -1; display:none;"></div>
+
+        <div class="form-group">
+          <label>Precio del producto</label>
+          <div class="price-input-group">
+            <input type="number" id="precio" min="0" step="0.01" placeholder="0.00" />
+            <select id="monedaPrecio">
+              <option value="USD">USD</option>
+              <option value="UYU">UYU</option>
+              <option value="CLP">CLP</option>
+              <option value="COP">COP</option>
+              <option value="PEN">PEN</option>
+              <option value="MXN">MXN</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" id="grupoPeso">
+          <label id="labelPeso">Peso aproximado (kg)</label>
+          <input type="number" id="peso" min="0" max="30" step="0.1" placeholder="ej: 0.5" />
+          <small id="hintPeso" style="display:block; margin-top:0.3rem; color: var(--muted); font-size: 0.75rem;">📦 Ej: 0.5 = medio kilo · 1.0 = 1 kilo · 2.5 = electrodoméstico chico. Si no lo sabés, dejalo vacío.</small>
+        </div>
+
+        <div class="form-group" id="grupoEnvio">
+          <label id="labelEnvio">Envío internacional (USD)</label>
+          <input type="number" id="envio" min="0" step="0.01" placeholder="Auto" />
+          <small id="hintEnvio" style="display:block; margin-top:0.3rem; color: var(--muted); font-size: 0.75rem;">💡 Dejá vacío para estimar automáticamente. Si conocés el envío real, ingrésalo.</small>
+        </div>
+
+        <div class="form-group">
+          <label>Intermediario</label>
+          <select id="intermediario"></select>
+        </div>
+
+        <div class="form-group">
+          <label id="labelTipoCambio">Tipo de cambio (USD → UYU)</label>
+          <input type="number" id="tipoCambio" min="1" step="0.1" value="43.5" />
+        </div>
+      </div>
+
+      <button class="calc-btn" onclick="calcular()">Calcular costo total</button>
+
+      <p class="calc-hint" id="calcHint">Solo necesitás el <strong>precio</strong> y el <strong>peso</strong> — la calculadora estima el envío e impuestos automáticamente.</p>
+
+      <div id="resultado">
+        <div class="alerta" id="alertaImpuesto"></div>
+
+        <div class="desglose">
+          <div class="desglose-fila">
+            <span>Precio producto</span>
+            <span id="r-precio"></span>
+          </div>
+          <div class="desglose-fila">
+            <span>Envío internacional</span>
+            <span id="r-envio"></span>
+          </div>
+          <div class="desglose-fila">
+            <span>Subtotal</span>
+            <span id="r-subtotal"></span>
+          </div>
+          <div class="desglose-fila">
+            <span id="r-iva-label">IVA</span>
+            <span id="r-iva"></span>
+          </div>
+          <div class="desglose-fila">
+            <span id="r-arancel-label">Arancel aduanero</span>
+            <span id="r-arancel"></span>
+          </div>
+          <div class="desglose-fila">
+            <span id="r-inter-label">Intermediario</span>
+            <span id="r-inter"></span>
+          </div>
+          <div class="desglose-fila total">
+            <span>Total USD</span>
+            <span id="r-total-usd"></span>
+          </div>
+        </div>
+
+        <div class="total-local">
+          <span id="r-total-local-label">Total en moneda local</span>
+          <span id="r-total-local"></span>
+        </div>
+
+        <div class="fuente-oficial" id="fuenteOficial">
+          <small>
+            <strong>📋 Fuente:</strong> <a id="fuenteLink" href="#" target="_blank" rel="noopener">organismo oficial</a><br>
+            <span id="notaPaisTexto"></span>
+          </small>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+  const AMAZON_TAG = "TU_TAG_AMAZON";
+
+  const TIENDAS = [
+    { slug: "amazon",       nombre: "Amazon",       bg: "#FFFFFF", url: q => `https://www.amazon.com/s?k=${q}&tag=${AMAZON_TAG}` },
+    { slug: "ebay",         nombre: "eBay",         bg: "#FFFFFF", url: q => `https://www.ebay.com/sch/i.html?_nkw=${q}` },
+    { slug: "tiendamia",    nombre: "Tiendamia",    bg: "#ff3c3c", url: q => `https://tiendamia.com.uy/search/amazon/${q}` },
+    { slug: "mercadolibre", nombre: "MercadoLibre", bg: "#FFE600", url: q => `https://listado.mercadolibre.com.uy/${q}` },
+    { slug: "aliexpress",   nombre: "AliExpress",   bg: "#FFFFFF", url: q => `https://www.aliexpress.com/wholesale?SearchText=${q}` },
+    { slug: "temu",         nombre: "Temu",         bg: "#FB7701", url: q => `https://www.temu.com/search_result.html?search_key=${q}` }
+  ];
+
+  const PAISES = {
+    UY: {
+      nombre: "Uruguay",
+      bandera: "🇺🇾",
+      moneda: "UYU",
+      tasaUSDDefault: 43.5,
+      iva: 0.22,
+      arancel: 0.10,
+      umbralIVA: 200,
+      umbralArancel: 200,
+      arancelMode: 'total',
+      arancelDescuento: 0,
+      ivaLabel: 'IVA',
+      arancelLabel: 'Arancel aduanero',
+      organismo: 'Aduana Uruguay',
+      fuenteOficial: 'https://www.aduanas.gub.uy/',
+      notaPais: 'Cálculo estimativo basado en el régimen general. El arancel real varía según el código NCM del producto.',
+      activo: true,
+      intermediarios: [
+        { id: "directo",   nombre: "Sin intermediario",      costo: () => 0 },
+        { id: "tiendamia", nombre: "Tiendamia (+20%)",       costo: s => s * 0.20 },
+        { id: "oca",       nombre: "OCA (+10% + $8)",        costo: s => s * 0.10 + 8 },
+        { id: "correo",    nombre: "Correo UY (+5% + $5)",   costo: s => s * 0.05 + 5 }
+      ]
+    },
+    CL: {
+      nombre: "Chile",
+      bandera: "🇨🇱",
+      moneda: "CLP",
+      tasaUSDDefault: 960,
+      iva: 0.19,
+      arancel: 0.06,
+      umbralIVA: 0,
+      umbralArancel: 500,
+      arancelMode: 'total',
+      arancelDescuento: 0,
+      ivaLabel: 'IVA',
+      arancelLabel: 'Arancel ad-valorem',
+      organismo: 'SII Chile',
+      fuenteOficial: 'https://www.sii.cl/destacados/iva_bienes/',
+      notaPais: 'Chile aplica IVA 19% desde el primer dólar (cambio oct 2025). El arancel 6% solo se aplica sobre USD 500.',
+      activo: true,
+      intermediarios: [
+        { id: "directo",     nombre: "Sin intermediario",          costo: () => 0 },
+        { id: "chilexpress", nombre: "Chilexpress (+10% + $6)",    costo: s => s * 0.10 + 6 },
+        { id: "correos_cl",  nombre: "Correos de Chile (+5% + $4)", costo: s => s * 0.05 + 4 },
+        { id: "dhl",         nombre: "DHL (+15% + $10)",           costo: s => s * 0.15 + 10 }
+      ]
+    },
+    CO: {
+      nombre: "Colombia",
+      bandera: "🇨🇴",
+      moneda: "COP",
+      tasaUSDDefault: 4150,
+      iva: 0.19,
+      arancel: 0.10,
+      umbralIVA: 50,
+      umbralArancel: 200,
+      arancelMode: 'total',
+      arancelDescuento: 0,
+      ivaLabel: 'IVA',
+      arancelLabel: 'Arancel',
+      organismo: 'DIAN',
+      fuenteOficial: 'https://www.dian.gov.co/Viajeros-y-Servicios-aduaneros/Paginas/Modalidad-de-trafico-postal-y-envios-urgentes.aspx',
+      notaPais: 'Decreto 1474/2025 redujo el umbral de exención de IVA a USD 50. El arancel aplica sobre USD 200.',
+      activo: true,
+      intermediarios: [
+        { id: "directo",      nombre: "Sin intermediario",          costo: () => 0 },
+        { id: "servientrega", nombre: "Servientrega (+8% + $5)",    costo: s => s * 0.08 + 5 },
+        { id: "coordinadora", nombre: "Coordinadora (+6% + $4)",    costo: s => s * 0.06 + 4 },
+        { id: "dhl",          nombre: "DHL (+15% + $10)",           costo: s => s * 0.15 + 10 }
+      ]
+    },
+    PE: {
+      nombre: "Perú",
+      bandera: "🇵🇪",
+      moneda: "PEN",
+      tasaUSDDefault: 3.7,
+      iva: 0.18,
+      arancel: 0.04,
+      umbralIVA: 200,
+      umbralArancel: 200,
+      arancelMode: 'total',
+      arancelDescuento: 0,
+      ivaLabel: 'IGV',
+      arancelLabel: 'Arancel ad-valorem',
+      organismo: 'SUNAT',
+      fuenteOficial: 'https://www.sunat.gob.pe/orientacionaduanera/importaFacil/index.html',
+      notaPais: 'Régimen Importa Fácil hasta USD 2000. Sobre USD 200 paga IGV 18% + arancel 4%.',
+      activo: true,
+      intermediarios: [
+        { id: "directo",  nombre: "Sin intermediario",         costo: () => 0 },
+        { id: "serpost",  nombre: "Serpost (+5% + $3)",        costo: s => s * 0.05 + 3 },
+        { id: "olva",     nombre: "Olva Courier (+8% + $5)",   costo: s => s * 0.08 + 5 },
+        { id: "dhl",      nombre: "DHL (+15% + $10)",          costo: s => s * 0.15 + 10 }
+      ]
+    },
+    MX: {
+      nombre: "México",
+      bandera: "🇲🇽",
+      moneda: "MXN",
+      tasaUSDDefault: 17.5,
+      iva: 0.16,
+      arancel: 0,
+      umbralIVA: 50,
+      umbralArancel: 50,
+      arancelMode: 'total',
+      arancelDescuento: 0,
+      ivaLabel: 'Tasa global SAT',
+      arancelLabel: 'Arancel',
+      organismo: 'SAT',
+      fuenteOficial: 'http://omawww.sat.gob.mx/aduanas/importando_exportando/guia_importacion/Paginas/contribuciones_que_puedan_causarse_con_importacion.aspx',
+      notaPais: 'Boleta aduanal SAT: 16% tasa global hasta USD 1000 (cubre IVA + arancel). Productos chinos pueden tener aranceles TIGIE más altos.',
+      activo: true,
+      intermediarios: [
+        { id: "directo",    nombre: "Sin intermediario",            costo: () => 0 },
+        { id: "correos_mx", nombre: "Correos de México (+5% + $4)", costo: s => s * 0.05 + 4 },
+        { id: "estafeta",   nombre: "Estafeta (+8% + $5)",          costo: s => s * 0.08 + 5 },
+        { id: "dhl",        nombre: "DHL (+15% + $10)",             costo: s => s * 0.15 + 10 }
+      ]
+    },
+  };
+
+  let paisActivo = "UY";
+  const TASAS = { CLP: 960, COP: 4150, PEN: 3.7, MXN: 17.5 };
+
+  // Disclaimers y requisitos mínimos por tienda/país (solo mensajes, sin links)
+  const TIENDA_DISCLAIMERS = {
+    UY: {
+      temu: '⚠️ Temu en Uruguay: Monto mínimo variable (~$1200 pesos UYU o USD 30-40 aprox.). Verifica directamente en Temu antes de completar.',
+      mercadolibre: '⚠️ Mercado Libre Uruguay: Cupo anual USD 800 máximo en 5 envíos. Máx 3 del mismo producto. Requiere clave fiscal nivel 2.',
+      tiendamia: '⚠️ Tiendamia: Cupo anual USD 800 desde mayo 2026. Solo productos nuevos desde USA.',
+      aliexpress: '⚠️ AliExpress: Sin mínimo de plataforma, pero algunos vendedores cobran envío según montos.'
+    },
+    CL: {
+      temu: '⚠️ Temu en Chile: Requisitos mínimos varían por promociones. Verifica directamente en Temu.',
+      tiendamia: '⚠️ Tiendamia: No disponible en Chile actualmente.',
+      mercadolibre: '⚠️ Mercado Libre: No disponible para compras internacionales desde Chile.'
+    },
+    CO: {
+      temu: '⚠️ Temu en Colombia: Requisitos mínimos varían por promociones. Verifica directamente en Temu.',
+      tiendamia: '⚠️ Tiendamia: Disponible en Colombia. Verifica límites según aduanas locales.',
+      mercadolibre: '⚠️ Mercado Libre: No disponible para compras internacionales desde Colombia.'
+    },
+    PE: {
+      temu: '⚠️ Temu en Perú: Requisitos mínimos varían. Verifica directamente antes de completar.',
+      tiendamia: '⚠️ Tiendamia Perú: Máximo USD 200 por compra. Límite anual USD 2000 (máx 3 compras con DNI).',
+      mercadolibre: '⚠️ Mercado Libre: No disponible para compras internacionales desde Perú.'
+    },
+    MX: {
+      temu: '⚠️ Temu en México: Requisitos mínimos varían. Verifica directamente.',
+      tiendamia: '⚠️ Tiendamia: No disponible en México actualmente.',
+      aliexpress: '⚠️ AliExpress: Productos chinos con aranceles TIGIE 5-50% según tipo. Este cálculo usa tasa general.',
+      mercadolibre: '⚠️ Mercado Libre: No disponible para compras internacionales desde México.'
+    }
+  };
+
+  // Costos de envío estimados por tienda + país (en USD)
+  // Fórmula: cargosTotales = empaque + (peso × porKg) + (precio × tarifaPct)
+  //   - empaque: cargo fijo por manejo/empaque
+  //   - porKg: tarifa de envío por kilogramo
+  //   - tarifaPct: % sobre el precio que cobra la tienda como servicio (típico de Tiendamia)
+  // Si la tienda tiene "incluido: true", el envío ya está dentro del precio (Temu/AliExpress).
+  // Si tiene "yaIncluyeTodo: true", la tienda gestiona aduana → no sumar IVA/arancel/intermediario.
+  const COSTOS_ENVIO = {
+    // Tiendamia opera como intermediario completo: incluye tarifa, empaque, envío y aduana
+    // Calibrado con ejemplo real: producto $49.49, 0.55kg → tarifa $3.46 + empaque $1.99 + envío $12.31 = $17.76
+    tiendamia: {
+      yaIncluyeTodo: true,  // Tiendamia ya incluye impuestos en sus tarifas; no sumar IVA/arancel/intermediario
+      UY: { empaque: 1.99, porKg: 22.4, tarifaPct: 0.07 },
+      CL: { empaque: 2.50, porKg: 26.0, tarifaPct: 0.08 },
+      CO: { empaque: 2.50, porKg: 25.0, tarifaPct: 0.08 },
+      PE: { empaque: 2.50, porKg: 25.0, tarifaPct: 0.08 },
+      MX: null
+    },
+    // Amazon: envío internacional. El usuario PUEDE pasar por courier (intermediario).
+    amazon: {
+      UY: { empaque: 0, porKg: 15, tarifaPct: 0 },
+      CL: { empaque: 0, porKg: 15, tarifaPct: 0 },
+      CO: { empaque: 0, porKg: 15, tarifaPct: 0 },
+      PE: { empaque: 0, porKg: 15, tarifaPct: 0 },
+      MX: { empaque: 0, porKg: 12, tarifaPct: 0 }
+    },
+    ebay: {
+      UY: { empaque: 0, porKg: 18, tarifaPct: 0 },
+      CL: { empaque: 0, porKg: 18, tarifaPct: 0 },
+      CO: { empaque: 0, porKg: 18, tarifaPct: 0 },
+      PE: { empaque: 0, porKg: 18, tarifaPct: 0 },
+      MX: { empaque: 0, porKg: 15, tarifaPct: 0 }
+    },
+    aliexpress:   { incluido: true },
+    temu:         { incluido: true },
+    mercadolibre: { noAplica: true }
+  };
+
+  // Calcula cargos estimados de la tienda (envío + empaque + tarifa) en USD
+  function estimarEnvio(tienda, pais, precio, peso) {
+    const conf = COSTOS_ENVIO[tienda];
+    if (!conf) return { valor: 0, tipo: 'no-disponible' };
+    if (conf.incluido)  return { valor: 0, tipo: 'incluido' };
+    if (conf.noAplica)  return { valor: 0, tipo: 'no-aplica' };
+    const cfgPais = conf[pais];
+    if (!cfgPais) return { valor: 0, tipo: 'no-disponible' };
+    const pesoEfectivo = peso > 0 ? peso : 0.5; // default si no ingresa peso
+    const empaque = cfgPais.empaque || 0;
+    const envioPeso = pesoEfectivo * (cfgPais.porKg || 0);
+    const tarifaPct = precio * (cfgPais.tarifaPct || 0);
+    const total = empaque + envioPeso + tarifaPct;
+    return {
+      valor: total,
+      tipo: 'estimado',
+      detalle: { empaque, envioPeso, tarifaPct, pesoEfectivo, cfgPais }
+    };
+  }
+
+  function renderStoreCircles(query) {
+    const encoded = query ? encodeURIComponent(query) : null;
+    const html = TIENDAS.map(t => {
+      const disabled = !encoded;
+      const tag = disabled ? "div" : "a";
+      const linkAttrs = disabled
+        ? ""
+        : `href="${t.url(encoded)}" target="_blank" rel="noopener"`;
+      return `
+        <${tag} class="store-card ${disabled ? 'disabled' : ''}" ${linkAttrs} onclick="seleccionarTienda('${t.slug}')">
+          <div class="circle" style="background:${t.bg};">
+            <img src="logos/${t.slug}.svg" alt="${t.nombre}"/>
+          </div>
+          <span class="store-name">${t.nombre}</span>
+        </${tag}>
+      `;
+    }).join("");
+    document.getElementById("storesRow").innerHTML = html;
+  }
+
+  function renderIntermediarios() {
+    const cfg = PAISES[paisActivo];
+    const sel = document.getElementById("intermediario");
+    sel.innerHTML = cfg.intermediarios.map(i =>
+      `<option value="${i.id}">${i.nombre}</option>`
+    ).join("");
+  }
+
+  function actualizarLabelsPorPais() {
+    const cfg = PAISES[paisActivo];
+    document.getElementById("labelTipoCambio").textContent =
+      `Tipo de cambio (USD → ${cfg.moneda})`;
+    document.getElementById("tipoCambio").value = cfg.tasaUSDDefault;
+    document.getElementById("r-total-local-label").textContent =
+      `Total en ${cfg.moneda}`;
+
+    // Top bar — actualizar país visible
+    const countryBadge = document.querySelector(".country-badge");
+    if (countryBadge) {
+      countryBadge.innerHTML = `<span>${cfg.nombre}</span>`;
+    }
+
+    // Fuente oficial + nota
+    const linkFuente = document.getElementById("fuenteLink");
+    const notaTxt   = document.getElementById("notaPaisTexto");
+    if (linkFuente && cfg.fuenteOficial) {
+      linkFuente.href = cfg.fuenteOficial;
+      linkFuente.textContent = cfg.organismo || "Fuente oficial";
+    }
+    if (notaTxt) notaTxt.textContent = cfg.notaPais || "";
+  }
+
+  function cambiarPais(pais) {
+    if (!PAISES[pais] || !PAISES[pais].activo) return;
+    paisActivo = pais;
+    renderIntermediarios();
+    actualizarLabelsPorPais();
+
+    // Cambiar automáticamente la moneda del precio a la del país seleccionado
+    const cfg = PAISES[pais];
+    document.getElementById("monedaPrecio").value = cfg.moneda;
+
+    // Re-evaluar la tienda: disclaimers cambian por país y la disponibilidad de envío también
+    onTiendaChange();
+
+    // Resetear resultado y mostrar hint nuevamente
+    const res = document.getElementById("resultado");
+    if (res) res.classList.remove("visible");
+    const hint = document.getElementById("calcHint");
+    if (hint) hint.style.display = "";
+  }
+
+  function onTiendaChange() {
+    const tienda = document.getElementById("tiendaSelect").value;
+    const grupoTipo = document.getElementById("grupoTipoCompra");
+    const disclaimer = document.getElementById("tiendaDisclaimer");
+    const grupoPeso = document.getElementById("grupoPeso");
+    const grupoEnvio = document.getElementById("grupoEnvio");
+    const labelEnvio = document.getElementById("labelEnvio");
+    const hintEnvio = document.getElementById("hintEnvio");
+    const inputEnvio = document.getElementById("envio");
+
+    // Mostrar/ocultar "Tipo de compra" según si es Mercado Libre
+    grupoTipo.style.display = (tienda === "mercadolibre") ? "" : "none";
+    if (tienda !== "mercadolibre") {
+      document.getElementById("tipoCompra").value = "internacional";
+      onTipoCompraChange();
+    }
+
+    // Tiendas con envío incluido en el precio (Temu, AliExpress): no pide peso ni envío
+    const envioIncluido = ["temu", "aliexpress"].includes(tienda);
+    // Tiendas con auto-estimación por peso
+    const usaPeso = ["amazon", "ebay", "tiendamia"].includes(tienda);
+    // Tiendas que ya gestionan aduana (no aplica intermediario adicional)
+    const tiendaIncluyeTodo = !!(COSTOS_ENVIO[tienda] && COSTOS_ENVIO[tienda].yaIncluyeTodo);
+
+    grupoPeso.style.display = usaPeso ? "" : "none";
+
+    // Limpiar campo envío al cambiar de tienda (evita arrastrar valores viejos)
+    inputEnvio.value = "";
+
+    if (envioIncluido) {
+      grupoEnvio.style.display = "none";
+    } else if (tiendaIncluyeTodo) {
+      // Tiendamia: el envío lo cobra la propia tienda, no es del exterior
+      grupoEnvio.style.display = "none";
+    } else if (usaPeso) {
+      grupoEnvio.style.display = "";
+      labelEnvio.textContent = "Envío internacional (USD) — opcional";
+      hintEnvio.textContent = "💡 Dejá vacío para estimar automáticamente con el peso. O ingresá el envío real si lo conocés.";
+      inputEnvio.placeholder = "Auto";
+    } else {
+      // Mercado Libre internacional o local
+      grupoEnvio.style.display = "";
+      labelEnvio.textContent = "Envío (USD)";
+      hintEnvio.textContent = "Ingresá el costo de envío que ves en la tienda.";
+      inputEnvio.placeholder = "0.00";
+    }
+
+    // Ocultar selector de intermediario cuando la tienda ya incluye aduana (Tiendamia)
+    const grupoInter = document.getElementById("intermediario").closest(".form-group");
+    if (grupoInter) {
+      grupoInter.style.display = tiendaIncluyeTodo ? "none" : "";
+    }
+
+    // Disclaimer dinámico solo para el país y tienda seleccionados
+    let disclaimerContent = "";
+    const paisDisclaimers = TIENDA_DISCLAIMERS[paisActivo];
+    if (paisDisclaimers && paisDisclaimers[tienda]) {
+      disclaimerContent = paisDisclaimers[tienda];
+    }
+    if (envioIncluido) {
+      const msgIncl = "✅ <strong>Envío ya incluido</strong> en el precio del producto. Solo ingresá el precio final que ves en la tienda.";
+      disclaimerContent = disclaimerContent ? msgIncl + "<br>" + disclaimerContent : msgIncl;
+    } else if (usaPeso) {
+      const conf = COSTOS_ENVIO[tienda];
+      if (conf && conf[paisActivo] === null) {
+        disclaimerContent = `⛔ <strong>${tienda.charAt(0).toUpperCase()+tienda.slice(1)} no opera en este país.</strong> Probá con otra tienda.`;
+      } else if (tiendaIncluyeTodo) {
+        const msgTM = "ℹ️ <strong>Tiendamia incluye todo:</strong> tarifa, empaque, envío y aduana. El total estimado coincide con el subtotal que ves en su carrito.";
+        disclaimerContent = disclaimerContent ? msgTM + "<br>" + disclaimerContent : msgTM;
+      } else {
+        const msgEst = "ℹ️ <strong>Envío auto-estimado</strong> según peso. Ingresá el envío real (que ves en la tienda) para mayor precisión.";
+        disclaimerContent = disclaimerContent ? msgEst + "<br>" + disclaimerContent : msgEst;
+      }
+    }
+
+    if (disclaimerContent) {
+      disclaimer.style.display = "";
+      disclaimer.innerHTML = disclaimerContent;
+    } else {
+      disclaimer.style.display = "none";
+      disclaimer.innerHTML = "";
+    }
+
+    // Deshabilitar botón calcular si la tienda no opera en el país
+    const conf = COSTOS_ENVIO[tienda];
+    const noOpera = conf && conf[paisActivo] === null;
+    const btnCalc = document.querySelector(".calc-btn");
+    if (btnCalc) {
+      btnCalc.disabled = !!noOpera;
+      btnCalc.textContent = noOpera ? "No disponible en este país" : "Calcular costo total";
+    }
+  }
+
+  function onTipoCompraChange() {
+    const esLocal = document.getElementById("tipoCompra").value === "local";
+
+    // Ocultar/mostrar el campo "Intermediario" (no aplica a compra local)
+    const grupoIntermediario = document.getElementById("intermediario").closest(".form-group");
+    if (grupoIntermediario) grupoIntermediario.style.display = esLocal ? "none" : "";
+
+    // Cambiar el label del envío y ajustar el label del precio
+    const inputEnvio = document.getElementById("envio");
+    if (inputEnvio) {
+      const lbl = inputEnvio.previousElementSibling;
+      if (lbl && lbl.tagName === "LABEL") {
+        lbl.textContent = esLocal ? "Envío local (opcional)" : "Envío internacional (USD)";
+      }
+    }
+  }
+
+  // Sincroniza la calculadora cuando el usuario clickea un círculo de tienda
+  function seleccionarTienda(slug) {
+    const map = {
+      amazon:       'amazon',
+      ebay:         'ebay',
+      tiendamia:    'tiendamia',
+      mercadolibre: 'mercadolibre',
+      aliexpress:   'aliexpress',
+      temu:         'temu'
+    };
+    const valor = map[slug] || 'amazon';
+    const select = document.getElementById("tiendaSelect");
+    if (select && select.value !== valor) {
+      select.value = valor;
+      onTiendaChange();
+    }
+  }
+
+  function scrollSuaveA(elemento, duracion) {
+    duracion = duracion || 1200;
+    const inicioY = window.pageYOffset;
+    const rect = elemento.getBoundingClientRect();
+    const destinoY = inicioY + rect.top - 20;
+    const inicioTime = performance.now();
+    const easing = t => t < 0.5
+      ? 4 * t * t * t
+      : 1 - Math.pow(-2 * t + 2, 3) / 2;
+
+    function paso(ahora) {
+      const transcurrido = ahora - inicioTime;
+      const progreso = Math.min(transcurrido / duracion, 1);
+      window.scrollTo(0, inicioY + (destinoY - inicioY) * easing(progreso));
+      if (progreso < 1) requestAnimationFrame(paso);
+    }
+    requestAnimationFrame(paso);
+  }
+
+  function buscar() {
+    const q = document.getElementById("busqueda").value.trim();
+    if (!q) {
+      const sb = document.getElementById("searchBar");
+      sb.classList.remove("shake");
+      void sb.offsetWidth;
+      sb.classList.add("shake");
+      document.getElementById("busqueda").focus();
+      return;
+    }
+    renderStoreCircles(q);
+
+    // En mobile: desplazarse a la calculadora
+    if (window.innerWidth <= 820) {
+      const calc = document.getElementById("calculadora-anchor");
+      if (calc) scrollSuaveA(calc, 1000);
+    }
+  }
+
+  function calcular() {
+    const cfg = PAISES[paisActivo];
+    const precioRaw  = parseFloat(document.getElementById("precio").value)    || 0;
+
+    if (precioRaw <= 0) {
+      const inp = document.getElementById("precio");
+      inp.classList.add("input-error");
+      inp.focus();
+      setTimeout(() => inp.classList.remove("input-error"), 1500);
+      return;
+    }
+
+    const moneda     = document.getElementById("monedaPrecio").value;
+    const envioInput = document.getElementById("envio").value;
+    const envioManual = envioInput !== "" ? parseFloat(envioInput) : null;
+    const pesoRaw    = parseFloat(document.getElementById("peso").value) || 0;
+    const interId    = document.getElementById("intermediario").value;
+    const tipoCambio = parseFloat(document.getElementById("tipoCambio").value) || cfg.tasaUSDDefault;
+
+    const tienda     = document.getElementById("tiendaSelect").value;
+    const tipoCompra = document.getElementById("tipoCompra").value;
+    const esLocal    = tienda === "mercadolibre" && tipoCompra === "local";
+
+    const fmtLocalMoneda = v => `${cfg.moneda} ${v.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
+
+    if (esLocal) {
+      // Compra local en Mercado Libre: sin impuestos de importación. Precio + envío en moneda local.
+      const envio = envioManual || 0;
+      const totalLocal = precioRaw + envio;
+
+      // Ocultar filas que no aplican
+      document.getElementById("r-iva").closest(".desglose-fila").style.display      = "none";
+      document.getElementById("r-arancel").closest(".desglose-fila").style.display  = "none";
+      document.getElementById("r-inter").closest(".desglose-fila").style.display    = "none";
+      document.getElementById("r-subtotal").closest(".desglose-fila").style.display = "none";
+      document.getElementById("r-total-usd").closest(".desglose-fila").style.display = "none";
+
+      // Mostrar precio + envío en moneda local
+      document.getElementById("r-precio").textContent = fmtLocalMoneda(precioRaw);
+      document.getElementById("r-envio").textContent  = envio > 0 ? fmtLocalMoneda(envio) : "Sin envío";
+      document.getElementById("r-total-local").textContent = fmtLocalMoneda(totalLocal);
+
+      const alerta = document.getElementById("alertaImpuesto");
+      alerta.className   = "alerta libre";
+      alerta.textContent = `✅ Compra local en Mercado Libre ${cfg.nombre} — sin impuestos de importación.`;
+
+      const hint = document.getElementById("calcHint");
+      if (hint) hint.style.display = "none";
+
+      const res = document.getElementById("resultado");
+      res.classList.remove("visible");
+      res.style.display = "block";
+      void res.offsetWidth;
+      res.classList.add("visible");
+
+      const panel = document.querySelector(".panel");
+      panel.classList.remove("calculando");
+      void panel.offsetWidth;
+      panel.classList.add("calculando");
+      panel.addEventListener("animationend", () => panel.classList.remove("calculando"), { once: true });
+      return;
+    }
+
+    // Re-mostrar filas (puede venir de un cálculo local previo)
+    document.getElementById("r-iva").closest(".desglose-fila").style.display      = "";
+    document.getElementById("r-inter").closest(".desglose-fila").style.display    = "";
+    document.getElementById("r-subtotal").closest(".desglose-fila").style.display = "";
+    document.getElementById("r-total-usd").closest(".desglose-fila").style.display = "";
+
+    let precio = precioRaw;
+    if (moneda === cfg.moneda) precio = precioRaw / tipoCambio;
+    else if (TASAS[moneda])    precio = precioRaw / TASAS[moneda];
+
+    // ─── Estimación de envío ───
+    // Reglas:
+    // - Temu / AliExpress: envío incluido en el precio → 0
+    // - Mercado Libre internacional: usuario debe ingresar manualmente
+    // - Amazon / eBay / Tiendamia: si usuario lo ingresó usa ese, sino auto-estima con peso
+    let envio = 0;
+    let envioEsEstimado = false;
+    const confEnvio = COSTOS_ENVIO[tienda];
+
+    if (confEnvio && confEnvio.incluido) {
+      envio = 0; // Temu / AliExpress
+    } else if (envioManual !== null && envioManual >= 0) {
+      envio = envioManual; // Usuario lo ingresó manualmente
+    } else if (confEnvio && confEnvio[paisActivo]) {
+      const est = estimarEnvio(tienda, paisActivo, precio, pesoRaw);
+      envio = est.valor;
+      envioEsEstimado = est.tipo === 'estimado';
+    }
+
+    const subtotal      = precio + envio;
+
+    // Si la tienda ya incluye impuestos/aduana (Tiendamia), no sumar IVA/arancel/intermediario.
+    // Sus cargos ya cubren el servicio aduanal hasta el destino.
+    const tiendaIncluyeTodo = !!(confEnvio && confEnvio.yaIncluyeTodo);
+
+    const aplicaIVA     = !tiendaIncluyeTodo && subtotal > cfg.umbralIVA;
+    const aplicaArancel = !tiendaIncluyeTodo && subtotal > cfg.umbralArancel;
+    const iva = aplicaIVA ? subtotal * cfg.iva : 0;
+    let arancel = 0;
+    if (aplicaArancel) {
+      const base = cfg.arancelMode === 'excedente'
+        ? subtotal - cfg.umbralArancel
+        : subtotal;
+      arancel = Math.max(0, base * cfg.arancel - (cfg.arancelDescuento || 0));
+    }
+
+    let inter, costoInter;
+    if (tiendaIncluyeTodo) {
+      inter = { id: "incluido", nombre: "Incluido en cargos de tienda" };
+      costoInter = 0;
+    } else {
+      inter      = cfg.intermediarios.find(i => i.id === interId) || cfg.intermediarios[0];
+      costoInter = inter.costo(subtotal);
+    }
+
+    const totalUSD   = subtotal + iva + arancel + costoInter;
+    const totalLocal = totalUSD * tipoCambio;
+
+    const usd      = v => '$' + v.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const fmtLocal = v => `${cfg.moneda} ${v.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ".")}`;
+
+    document.getElementById("r-precio").textContent        = usd(precio);
+
+    // Label dinámico para envío según si es incluido / estimado / manual
+    const filaEnvio = document.getElementById("r-envio").closest(".desglose-fila");
+    const labelEnvioFila = filaEnvio.querySelector("span:first-child");
+    if (confEnvio && confEnvio.incluido) {
+      labelEnvioFila.textContent = "Envío internacional";
+      document.getElementById("r-envio").textContent = "Incluido en precio";
+    } else if (envioEsEstimado && tiendaIncluyeTodo) {
+      // Tiendamia: mostrar desglose de tarifa + empaque + envío
+      labelEnvioFila.textContent = "Tarifa + empaque + envío";
+      document.getElementById("r-envio").textContent = usd(envio);
+    } else if (envioEsEstimado) {
+      labelEnvioFila.textContent = "Envío estimado";
+      document.getElementById("r-envio").textContent = usd(envio);
+    } else {
+      labelEnvioFila.textContent = "Envío internacional";
+      document.getElementById("r-envio").textContent = envio > 0 ? usd(envio) : "Sin envío";
+    }
+
+    document.getElementById("r-subtotal").textContent      = usd(subtotal);
+    document.getElementById("r-iva-label").textContent     = `${cfg.ivaLabel} (${(cfg.iva*100).toFixed(0)}%)`;
+    document.getElementById("r-arancel-label").textContent = `${cfg.arancelLabel} (${(cfg.arancel*100).toFixed(0)}%)`;
+    document.getElementById("r-iva").textContent     = aplicaIVA     ? usd(iva)     : `Exento (≤$${cfg.umbralIVA})`;
+    document.getElementById("r-arancel").textContent = aplicaArancel ? usd(arancel) : `Exento (≤$${cfg.umbralArancel})`;
+    document.getElementById("r-inter-label").textContent   = inter.nombre;
+    document.getElementById("r-inter").textContent         = usd(costoInter);
+    document.getElementById("r-total-usd").textContent     = usd(totalUSD);
+    document.getElementById("r-total-local").textContent   = fmtLocal(totalLocal);
+
+    document.getElementById("r-iva").closest(".desglose-fila").classList.toggle("exento", !aplicaIVA);
+    document.getElementById("r-arancel").closest(".desglose-fila").classList.toggle("exento", !aplicaArancel);
+
+    // Cuando Tiendamia ya incluye todo, ocultar filas de IVA, arancel e intermediario
+    document.getElementById("r-iva").closest(".desglose-fila").style.display = tiendaIncluyeTodo ? "none" : "";
+    document.getElementById("r-inter").closest(".desglose-fila").style.display = tiendaIncluyeTodo ? "none" : "";
+
+    // Ocultar fila de arancel cuando arancel === 0 (caso México) O cuando Tiendamia incluye todo
+    document.getElementById("r-arancel").closest(".desglose-fila").style.display = (cfg.arancel === 0 || tiendaIncluyeTodo) ? "none" : "";
+
+    const hint = document.getElementById("calcHint");
+    if (hint) hint.style.display = "none";
+
+    const alerta = document.getElementById("alertaImpuesto");
+    if (tiendaIncluyeTodo) {
+      alerta.className = "alerta libre";
+      alerta.textContent = `✅ Tiendamia ya incluye tarifa, empaque, envío y aduana en sus cargos.`;
+    } else {
+      const aplicaAlgo = aplicaIVA || aplicaArancel;
+      alerta.className = aplicaAlgo ? "alerta impuesto" : "alerta libre";
+      if (cfg.umbralIVA === cfg.umbralArancel) {
+        alerta.textContent = aplicaAlgo
+          ? `⚠️ Superás los $${cfg.umbralIVA} USD — se aplican ${cfg.ivaLabel}${cfg.arancel > 0 ? ' y ' + cfg.arancelLabel : ''}.`
+          : `✅ No superás los $${cfg.umbralIVA} USD — estás exento de impuestos.`;
+      } else {
+        if (aplicaIVA && aplicaArancel) {
+          alerta.textContent = `⚠️ Superás ambos umbrales — pagás ${cfg.ivaLabel} (≥$${cfg.umbralIVA}) y ${cfg.arancelLabel} (≥$${cfg.umbralArancel}).`;
+        } else if (aplicaIVA) {
+          alerta.textContent = `⚠️ Pagás ${cfg.ivaLabel} (umbral $${cfg.umbralIVA}) — exento de ${cfg.arancelLabel} (umbral $${cfg.umbralArancel}).`;
+        } else {
+          alerta.textContent = `✅ Bajo ambos umbrales — exento de impuestos.`;
+        }
+      }
+    }
+
+    // Animación del panel
+    const panel = document.querySelector(".panel");
+    panel.classList.remove("calculando");
+    void panel.offsetWidth; // fuerza reflow para reiniciar animación
+    panel.classList.add("calculando");
+    panel.addEventListener("animationend", () => panel.classList.remove("calculando"), { once: true });
+
+    // Mostrar resultado con animación
+    const res = document.getElementById("resultado");
+    res.classList.remove("visible");
+    res.style.display = "block";
+    void res.offsetWidth;
+    res.classList.add("visible");
+
+    // En desktop: scroll suave dentro de la columna al resultado
+    if (window.innerWidth > 820) {
+      setTimeout(() => {
+        const col = document.querySelector(".col-calc");
+        col.scrollTo({ top: col.scrollHeight, behavior: "smooth" });
+      }, 120);
+    }
+  }
+
+  renderStoreCircles(null);
+  renderIntermediarios();
+  actualizarLabelsPorPais();
+  onTiendaChange();        // inicializa visibilidad de "Tipo de compra" y disclaimer
+</script>
+
+</body>
+</html>

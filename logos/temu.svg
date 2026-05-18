@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <rect width="100" height="100" fill="#FB7701"/>
+
+  <!-- Iconos de productos arriba -->
+  <g fill="white">
+    <!-- Vestido -->
+    <path d="M 19 27 L 22 22 L 28 22 L 31 27 L 29 28 L 30 36 L 20 36 L 21 28 Z"/>
+    <!-- Caballito de juguete (silueta abstracta) -->
+    <path d="M 36 26 Q 38 22 42 23 L 46 26 L 48 28 L 47 32 L 44 32 L 44 36 L 41 36 L 41 34 L 38 34 L 38 36 L 36 36 Z"/>
+    <!-- Taco -->
+    <path d="M 52 36 L 52 32 Q 56 26 62 26 L 64 26 L 64 30 L 60 31 L 58 36 Z"/>
+    <!-- Cartera -->
+    <path d="M 70 28 L 80 28 L 80 36 L 70 36 Z"/>
+    <path d="M 72 28 Q 73 23 75 23 Q 77 23 78 28"
+          fill="none" stroke="white" stroke-width="1.6"/>
+  </g>
+
+  <!-- TEMU grande -->
+  <text x="50" y="72"
+        font-family="'Arial Black', Arial, sans-serif"
+        font-size="24" font-weight="900"
+        fill="white" text-anchor="middle"
+        letter-spacing="-0.5">TEMU</text>
+</svg>

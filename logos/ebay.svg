@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <rect width="200" height="200" fill="white"/>
+  <!-- eBay official colors: e=red, b=blue, a=yellow, y=green -->
+  <!-- Letters sized and spaced to fill the circle crop nicely -->
+  <g font-family="'Arial Black', 'Arial Bold', 'Helvetica Neue', Arial, sans-serif"
+     font-weight="900"
+     font-size="96">
+    <text x="4"   y="136" fill="#E53238">e</text>
+    <text x="52"  y="136" fill="#0064D2">b</text>
+    <text x="104" y="136" fill="#F5AF02">a</text>
+    <text x="152" y="136" fill="#86B817">y</text>
+  </g>
+</svg>
