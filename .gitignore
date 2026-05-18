@@ -1,0 +1,11 @@
+# Capturas de pantalla para promoción (no son parte del sitio)
+screenshot-*.png
+
+# Archivos del sistema
+Thumbs.db
+.DS_Store
+
+# Archivos temporales de editores
+*.tmp
+*.swp
+*~
