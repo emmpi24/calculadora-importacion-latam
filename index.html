@@ -1499,12 +1499,7 @@
       return;
     }
     renderStoreCircles(q);
-
-    // En mobile: desplazarse a la calculadora
-    if (window.innerWidth <= 820) {
-      const calc = document.getElementById("calculadora-anchor");
-      if (calc) scrollSuaveA(calc, 1000);
-    }
+    // El usuario permanece viendo las tiendas tras buscar (sin auto-scroll).
   }
 
   function calcular() {
