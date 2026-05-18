@@ -215,7 +215,7 @@ El objeto `PAISES` en `index.html` centraliza todas las reglas tributarias por p
 | País | Tienda | Requisito mínimo / Restricción | Verificar en |
 |---|---|---|---|
 | 🇺🇾 **Uruguay** | **Temu** | Monto mínimo ~$1200 pesos UYU (USD 30-40 aprox.). Varía con promociones. | [temu.com](https://www.temu.com) |
-| | **Mercado Libre** | Cupo anual USD 800 en máx 5 envíos. Máx 3 productos iguales. Se identifica con cédula uruguaya al comprar. | [mercadolibre.com.uy](https://www.mercadolibre.com.uy) |
+| | **Mercado Libre** | Sin disclaimer en la calculadora (no aporta valor crítico al cálculo). Para info de cupo anual USD 800, ver Mercado Libre. | [mercadolibre.com.uy](https://www.mercadolibre.com.uy) |
 | | **Tiendamia** | Cupo anual USD 800 desde mayo 2026 (antes USD 200/compra). Solo productos nuevos desde USA. | [tiendamia.com.uy](https://tiendamia.com.uy) |
 | | **Amazon / eBay** | Sin mínimo de plataforma. Depende del vendedor individual. | [amazon.com](https://www.amazon.com) / [ebay.com](https://www.ebay.com) |
 | | **AliExpress** | Sin mínimo de plataforma. Algunos vendedores cobran envío según montos. | [aliexpress.com](https://www.aliexpress.com) |
