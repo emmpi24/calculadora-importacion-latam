@@ -1034,6 +1034,8 @@
             <option value="CO">Colombia</option>
             <option value="PE">Perú</option>
             <option value="MX">México</option>
+            <option value="AR" disabled>🇦🇷 Argentina (próximamente)</option>
+            <option value="BR" disabled>🇧🇷 Brasil (próximamente)</option>
           </select>
         </div>
 
@@ -1598,6 +1600,7 @@
 
     // Limpiar campo envío al cambiar de tienda (evita arrastrar valores viejos)
     inputEnvio.value = "";
+    if (!usaPeso) document.getElementById("peso").value = "";
 
     if (envioIncluido) {
       grupoEnvio.style.display = "none";
@@ -1635,7 +1638,8 @@
     } else if (usaPeso) {
       const conf = COSTOS_ENVIO[tienda];
       if (conf && conf[paisActivo] === null) {
-        disclaimerContent = `⛔ <strong>${tienda.charAt(0).toUpperCase()+tienda.slice(1)} no opera en este país.</strong> Probá con otra tienda.`;
+        const nombreTiendaSafe = (tienda.charAt(0).toUpperCase() + tienda.slice(1)).replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        disclaimerContent = `⛔ <strong>${nombreTiendaSafe} no opera en este país.</strong> Probá con otra tienda.`;
       } else if (tiendaIncluyeTodo) {
         const msgTM = "ℹ️ <strong>Tiendamia incluye todo:</strong> tarifa, empaque, envío y aduana. El total estimado coincide con el subtotal que ves en su carrito.";
         disclaimerContent = disclaimerContent ? msgTM + "<br>" + disclaimerContent : msgTM;
@@ -1766,7 +1770,8 @@
 
     const moneda     = document.getElementById("monedaPrecio").value;
     const envioInput = document.getElementById("envio").value;
-    const envioManual = envioInput !== "" ? parseFloat(envioInput) : null;
+    let envioManual = envioInput !== "" ? parseFloat(envioInput) : null;
+    if (envioManual !== null && envioManual < 0) envioManual = 0;
     const pesoRaw    = parseFloat(document.getElementById("peso").value) || 0;
     const interId    = document.getElementById("intermediario").value;
     const tipoCambio = parseFloat(document.getElementById("tipoCambio").value) || cfg.tasaUSDDefault;
@@ -1779,8 +1784,19 @@
 
     if (esLocal) {
       // Compra local en Mercado Libre: sin impuestos de importación. Precio + envío en moneda local.
-      const envio = envioManual || 0;
-      const totalLocal = precioRaw + envio;
+
+      // Convertir precio a moneda local según la moneda que eligió el usuario
+      let precioLocal = precioRaw;
+      if (moneda === "USD") {
+        precioLocal = precioRaw * tipoCambio;
+      } else if (moneda !== cfg.moneda && TASAS[moneda]) {
+        precioLocal = (precioRaw / TASAS[moneda]) * tipoCambio;
+      }
+
+      // El envío se ingresa en USD → convertir a moneda local
+      const envioUSD = envioManual || 0;
+      const envio = envioUSD * tipoCambio;
+      const totalLocal = precioLocal + envio;
 
       // Ocultar filas que no aplican
       document.getElementById("r-iva").closest(".desglose-fila").style.display      = "none";
@@ -1790,8 +1806,8 @@
       document.getElementById("r-total-usd").closest(".desglose-fila").style.display = "none";
 
       // Mostrar precio + envío en moneda local
-      document.getElementById("r-precio").textContent = fmtLocalMoneda(precioRaw);
-      document.getElementById("r-envio").textContent  = envio > 0 ? fmtLocalMoneda(envio) : "Sin envío";
+      document.getElementById("r-precio").textContent = fmtLocalMoneda(precioLocal);
+      document.getElementById("r-envio").textContent  = envioUSD > 0 ? fmtLocalMoneda(envio) : "Sin envío";
       document.getElementById("r-total-local").textContent = fmtLocalMoneda(totalLocal);
 
       const alerta = document.getElementById("alertaImpuesto");
